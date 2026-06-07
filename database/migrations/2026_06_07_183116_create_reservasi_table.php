@@ -14,6 +14,14 @@ return new class extends Migration
         Schema::create('reservasi', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->foreignId('ruangan_id')->constrained('ruangan')->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
+            $table->date('tanggal');
+            $table->time('jam_mulai');
+            $table->time('jam_selesai');
+            $table->enum('status', ['menunggu', 'disetujui', 'ditolak'])->default('menunggu');
+            $table->text('keterangan')->nullable();
+            $table->index(['ruangan_id','tanggal']);
         });
     }
 

@@ -14,6 +14,11 @@ return new class extends Migration
         Schema::create('ruangan', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
+            $table->string('nama')->unique();
+            $table->unsignedInteger('kapasitas');
+            $table->time('jam_buka')->default('07:00:00');
+            $table->time('jam_tutup')->default('21:00:00');
+            $table->string('foto');
         });
     }
 
