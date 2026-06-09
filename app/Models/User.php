@@ -40,4 +40,16 @@ class User extends Authenticatable
     {
         return $this->role === 'admin';
     }
+
+    public function isPemohon(): bool
+    {
+        return $this->role === 'pemohon';
+    }
+
+    public function dashboardRoute(): string
+    {
+        return $this->isAdmin()
+            ? route('admin.dashboard')
+            : route('dashboard');
+    }
 }

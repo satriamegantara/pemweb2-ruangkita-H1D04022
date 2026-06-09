@@ -12,6 +12,8 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::livewire('/dashboard', 'pages::dashboard')->name('dashboard');
+    Route::livewire('/reservasi', 'pages::reservasi.index')->name('reservasi.index');
+    Route::livewire('/jadwal', 'pages::jadwal.harian')->name('jadwal.harian');
 
     Route::post('/logout', function () {
         Auth::logout();
@@ -21,4 +23,11 @@ Route::middleware('auth')->group(function () {
 
         return redirect()->route('landing');
     })->name('logout');
+});
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::livewire('/dashboard', 'pages::admin.dashboard')->name('dashboard');
+    Route::livewire('/ruangan', 'pages::admin.ruangan.index')->name('ruangan.index');
+    Route::livewire('/pemohon', 'pages::admin.pemohon.index')->name('pemohon.index');
+    Route::livewire('/persetujuan', 'pages::admin.persetujuan.index')->name('persetujuan.index');
 });

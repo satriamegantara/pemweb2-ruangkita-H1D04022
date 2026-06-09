@@ -47,7 +47,7 @@ new #[Title('Masuk')] class extends Component
 
         session()->regenerate();
 
-        $this->redirect(route('dashboard'), navigate: true);
+        $this->redirect(auth()->user()->dashboardRoute(), navigate: true);
     }
 };
 ?>
