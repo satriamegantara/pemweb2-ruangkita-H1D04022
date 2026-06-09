@@ -9,13 +9,13 @@ class Reservasi extends Model
 {
     protected $table = 'reservasi';
     protected $fillable = [
-        'ruangan_id', 
-        'user_id', '
-        tanggal', 
-        'jam_mulai', 
-        'jam_selesai', 
-        'status', 
-        'keterangan'
+        'ruangan_id',
+        'user_id',
+        'tanggal',
+        'jam_mulai',
+        'jam_selesai',
+        'status',
+        'keterangan',
     ];
 
     protected $casts = [
