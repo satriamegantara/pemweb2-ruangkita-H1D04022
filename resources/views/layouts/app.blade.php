@@ -10,8 +10,16 @@
 
         @livewireStyles
     </head>
-    <body>
-        {{ $slot }}
+    <body class="min-h-screen bg-slate-50 text-slate-900 antialiased">
+        <div class="flex min-h-screen flex-col">
+            @include('layouts.partials.navbar')
+
+            <main class="flex-1">
+                {{ $slot }}
+            </main>
+
+            @include('layouts.partials.footer')
+        </div>
 
         @livewireScripts
     </body>
