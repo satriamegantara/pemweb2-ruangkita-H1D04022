@@ -199,18 +199,18 @@ new #[Title('Kelola Ruangan')] class extends Component {
     #[Computed]
     public function ruanganAktif(): ?Ruangan
     {
-        if (! $this->editingId) {
+        if (!$this->editingId) {
             return null;
         }
 
         return Ruangan::query()
-            ->with(['fasilitas' => fn ($query) => $query->orderBy('nama')])
+            ->with(['fasilitas' => fn($query) => $query->orderBy('nama')])
             ->find($this->editingId);
     }
 
     public function addFasilitas(): void
     {
-        if (! $this->editingId) {
+        if (!$this->editingId) {
             return;
         }
 
@@ -247,7 +247,7 @@ new #[Title('Kelola Ruangan')] class extends Component {
 
     public function deleteFasilitas(int $id): void
     {
-        if (! $this->editingId) {
+        if (!$this->editingId) {
             return;
         }
 
@@ -364,25 +364,18 @@ new #[Title('Kelola Ruangan')] class extends Component {
 
                     <div>
                         <label for="foto" class="mb-1.5 block text-sm font-medium text-slate-700">Foto Ruangan</label>
-                        <input
-                            id="foto"
-                            type="file"
-                            wire:model="foto"
-                            accept="image/*"
-                            class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm outline-none transition file:mr-4 file:rounded-md file:border-0 file:bg-teal-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-teal-700 hover:file:bg-teal-100 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 @error('foto') border-red-500 @enderror"
-                        >
-                        <p class="mt-1.5 text-xs text-slate-500">Maksimal 2 MB. Format disarankan JPG, PNG, atau WEBP.</p>
+                        <input id="foto" type="file" wire:model="foto" accept="image/*"
+                            class="block w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm outline-none transition file:mr-4 file:rounded-md file:border-0 file:bg-teal-50 file:px-3 file:py-2 file:text-sm file:font-medium file:text-teal-700 hover:file:bg-teal-100 focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 @error('foto') border-red-500 @enderror">
+                        <p class="mt-1.5 text-xs text-slate-500">Maksimal 2 MB. Format disarankan JPG, PNG, atau WEBP.
+                        </p>
                         @error('foto')
                             <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
                         @enderror
 
                         @if ($this->fotoPreviewUrl)
                             <div class="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-slate-50">
-                                <img
-                                    src="{{ $this->fotoPreviewUrl }}"
-                                    alt="Pratinjau foto ruangan"
-                                    class="h-48 w-full object-cover"
-                                >
+                                <img src="{{ $this->fotoPreviewUrl }}" alt="Pratinjau foto ruangan"
+                                    class="h-48 w-full object-cover">
                             </div>
                         @endif
                     </div>
@@ -397,7 +390,8 @@ new #[Title('Kelola Ruangan')] class extends Component {
                             <div class="flex items-center justify-between gap-3">
                                 <div>
                                     <h3 class="text-sm font-semibold text-slate-900">Fasilitas Ruangan</h3>
-                                    <p class="mt-1 text-xs text-slate-500">Kelola fasilitas untuk {{ $this->ruanganAktif->nama }}.</p>
+                                    <p class="mt-1 text-xs text-slate-500">Kelola fasilitas untuk
+                                        {{ $this->ruanganAktif->nama }}.</p>
                                 </div>
                                 <span class="rounded-full bg-white px-3 py-1 text-xs font-medium text-slate-600">
                                     {{ $this->ruanganAktif->fasilitas->count() }} fasilitas
@@ -405,17 +399,11 @@ new #[Title('Kelola Ruangan')] class extends Component {
                             </div>
 
                             <div class="mt-4 flex gap-2">
-                                <input
-                                    type="text"
-                                    wire:model.live="fasilitas_nama"
+                                <input type="text" wire:model.live="fasilitas_nama"
                                     class="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 @error('fasilitas_nama') border-red-500 @enderror"
-                                    placeholder="Tambah fasilitas baru"
-                                >
-                                <button
-                                    type="button"
-                                    wire:click="addFasilitas"
-                                    class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
-                                >
+                                    placeholder="Tambah fasilitas baru">
+                                <button type="button" wire:click="addFasilitas"
+                                    class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800">
                                     Tambah
                                 </button>
                             </div>
@@ -425,15 +413,13 @@ new #[Title('Kelola Ruangan')] class extends Component {
 
                             <div class="mt-4 flex flex-wrap gap-2">
                                 @forelse ($this->ruanganAktif->fasilitas as $fasilitas)
-                                    <span class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-sm text-slate-700 shadow-sm ring-1 ring-slate-200">
+                                    <span
+                                        class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-sm text-slate-700 shadow-sm ring-1 ring-slate-200">
                                         {{ $fasilitas->nama }}
-                                        <button
-                                            type="button"
-                                            wire:click="deleteFasilitas({{ $fasilitas->id }})"
+                                        <button type="button" wire:click="deleteFasilitas({{ $fasilitas->id }})"
                                             wire:confirm="Hapus fasilitas ini?"
                                             class="text-rose-600 transition hover:text-rose-700"
-                                            aria-label="Hapus fasilitas {{ $fasilitas->nama }}"
-                                        >
+                                            aria-label="Hapus fasilitas {{ $fasilitas->nama }}">
                                             ×
                                         </button>
                                     </span>
