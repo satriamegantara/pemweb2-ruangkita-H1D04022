@@ -404,7 +404,7 @@ new #[Title('Kelola Ruangan')] class extends Component {
                                 </span>
                             </div>
 
-                            <form wire:submit="addFasilitas" class="mt-4 flex gap-2">
+                            <div class="mt-4 flex gap-2">
                                 <input
                                     type="text"
                                     wire:model.live="fasilitas_nama"
@@ -412,12 +412,13 @@ new #[Title('Kelola Ruangan')] class extends Component {
                                     placeholder="Tambah fasilitas baru"
                                 >
                                 <button
-                                    type="submit"
+                                    type="button"
+                                    wire:click="addFasilitas"
                                     class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
                                 >
                                     Tambah
                                 </button>
-                            </form>
+                            </div>
                             @error('fasilitas_nama')
                                 <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
                             @enderror
