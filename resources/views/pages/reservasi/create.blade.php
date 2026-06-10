@@ -1,0 +1,258 @@
+<?php
+
+use App\Models\Ruangan;
+use App\Rules\NoJadwalBentrok;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Livewire\Attributes\Computed;
+use Livewire\Attributes\Title;
+use Livewire\Component;
+
+new #[Title('Buat Reservasi')] class extends Component {
+    public ?int $ruangan_id = null;
+
+    public string $tanggal = '';
+
+    public string $jam_mulai = '';
+
+    public string $jam_selesai = '';
+
+    public string $keterangan = '';
+
+    public string $jamBukaRuangan = '';
+
+    public string $jamTutupRuangan = '';
+
+    public function mount(): void
+    {
+        $this->tanggal = now()->toDateString();
+    }
+
+    public function updated(string $property): void
+    {
+        if (in_array($property, ['ruangan_id', 'tanggal', 'jam_mulai', 'jam_selesai'], true)) {
+            $this->syncJamOperasional();
+            $this->validateOnly($property);
+            $this->validateOnly('jam_selesai');
+
+            return;
+        }
+
+        $this->validateOnly($property);
+    }
+
+    protected function rules(): array
+    {
+        return [
+            'ruangan_id' => ['required', 'exists:ruangan,id'],
+            'tanggal' => ['required', 'date', 'after_or_equal:today'],
+            'jam_mulai' => [
+                'required',
+                'date_format:H:i',
+                function ($attribute, $value, $fail) {
+                    if ($this->jamBukaRuangan && $value < $this->jamBukaRuangan) {
+                        $fail('Jam mulai harus berada dalam jam operasional ruangan.');
+                    }
+                },
+            ],
+            'jam_selesai' => [
+                'required',
+                'date_format:H:i',
+                function ($attribute, $value, $fail) {
+                    if ($this->jamTutupRuangan && $value > $this->jamTutupRuangan) {
+                        $fail('Jam selesai harus berada dalam jam operasional ruangan.');
+                    }
+                },
+                new NoJadwalBentrok($this->ruangan_id, $this->tanggal, $this->jam_mulai, $this->jam_selesai),
+            ],
+            'keterangan' => ['nullable', 'string', 'max:1000'],
+        ];
+    }
+
+    protected function messages(): array
+    {
+        return [
+            'ruangan_id.required' => 'Ruangan wajib dipilih.',
+            'ruangan_id.exists' => 'Ruangan tidak ditemukan.',
+            'tanggal.required' => 'Tanggal wajib diisi.',
+            'tanggal.after_or_equal' => 'Tanggal reservasi minimal hari ini.',
+            'jam_mulai.required' => 'Jam mulai wajib diisi.',
+            'jam_mulai.date_format' => 'Format jam mulai tidak valid.',
+            'jam_selesai.required' => 'Jam selesai wajib diisi.',
+            'jam_selesai.date_format' => 'Format jam selesai tidak valid.',
+            'keterangan.max' => 'Keterangan terlalu panjang.',
+        ];
+    }
+
+    public function save(): void
+    {
+        $validated = $this->validate();
+
+        $ruangan = Ruangan::query()->findOrFail($validated['ruangan_id']);
+
+        $jamMulai = Carbon::createFromFormat('H:i', $validated['jam_mulai']);
+        $jamSelesai = Carbon::createFromFormat('H:i', $validated['jam_selesai']);
+        $jamBuka = Carbon::createFromFormat('H:i:s', $ruangan->jam_buka);
+        $jamTutup = Carbon::createFromFormat('H:i:s', $ruangan->jam_tutup);
+
+        if ($jamMulai->lt($jamBuka)) {
+            $this->addError('jam_mulai', 'Jam mulai harus berada dalam jam operasional ruangan.');
+
+            return;
+        }
+
+        if ($jamSelesai->gt($jamTutup)) {
+            $this->addError('jam_selesai', 'Jam selesai harus berada dalam jam operasional ruangan.');
+
+            return;
+        }
+
+        if ($jamSelesai->lessThanOrEqualTo($jamMulai)) {
+            $this->addError('jam_selesai', 'Jam selesai harus lebih besar dari jam mulai.');
+
+            return;
+        }
+
+        Auth::user()?->reservasi()->create([
+            'ruangan_id' => $ruangan->id,
+            'tanggal' => $validated['tanggal'],
+            'jam_mulai' => $jamMulai->format('H:i:00'),
+            'jam_selesai' => $jamSelesai->format('H:i:00'),
+            'status' => 'menunggu',
+            'keterangan' => $validated['keterangan'] ?? null,
+        ]);
+
+        $this->dispatch(
+            'notify',
+            type: 'success',
+            title: 'Reservasi disimpan',
+            message: 'Permintaan reservasi berhasil dikirim dan menunggu persetujuan admin.',
+        );
+
+        $this->reset(['ruangan_id', 'jam_mulai', 'jam_selesai', 'keterangan', 'jamBukaRuangan', 'jamTutupRuangan']);
+        $this->tanggal = now()->toDateString();
+        $this->resetErrorBag();
+    }
+
+    public function syncJamOperasional(): void
+    {
+        if (!$this->ruangan_id) {
+            $this->jamBukaRuangan = '';
+            $this->jamTutupRuangan = '';
+
+            return;
+        }
+
+        $ruangan = Ruangan::query()->find($this->ruangan_id);
+
+        $this->jamBukaRuangan = $ruangan ? substr($ruangan->jam_buka, 0, 5) : '';
+        $this->jamTutupRuangan = $ruangan ? substr($ruangan->jam_tutup, 0, 5) : '';
+    }
+
+    #[Computed]
+    public function ruanganList()
+    {
+        return Ruangan::query()
+            ->orderBy('nama')
+            ->get();
+    }
+};
+?>
+
+<div class="mx-auto max-w-5xl px-4 py-10 sm:px-6">
+    <div class="space-y-8">
+        <div class="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                <div class="max-w-2xl">
+                    <p class="text-sm font-medium text-teal-700">Reservasi Ruangan</p>
+                    <h1 class="mt-1 text-2xl font-bold text-slate-900">Buat Reservasi</h1>
+                    <p class="mt-2 text-slate-600">Pilih ruangan, tanggal, dan jam penggunaan. Sistem akan menolak
+                        jadwal yang bentrok.</p>
+                </div>
+
+                <a href="{{ route('dashboard') }}"
+                    class="inline-flex text-sm font-medium text-teal-700 hover:text-teal-800">
+                    &larr; Kembali ke Dashboard
+                </a>
+            </div>
+        </div>
+
+        <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <form wire:submit="save" class="space-y-5">
+                <div class="grid gap-5 lg:grid-cols-2">
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-slate-700" for="ruangan_id">Ruangan</label>
+                        <select id="ruangan_id" wire:model.live="ruangan_id"
+                            class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 @error('ruangan_id') border-red-500 @enderror">
+                            <option value="">Pilih ruangan</option>
+                            @foreach ($this->ruanganList as $ruangan)
+                                <option value="{{ $ruangan->id }}">{{ $ruangan->nama }} ({{ $ruangan->kapasitas }} orang)
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('ruangan_id')
+                            <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+
+                        @if ($this->jamBukaRuangan && $this->jamTutupRuangan)
+                            <p class="mt-2 text-xs text-slate-500">Jam operasional ruangan: {{ $this->jamBukaRuangan }} -
+                                {{ $this->jamTutupRuangan }}</p>
+                        @endif
+                    </div>
+
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-slate-700" for="tanggal">Tanggal</label>
+                        <input id="tanggal" type="date" wire:model.live="tanggal"
+                            class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 @error('tanggal') border-red-500 @enderror">
+                        @error('tanggal')
+                            <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <div class="grid gap-5 lg:grid-cols-2">
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-slate-700" for="jam_mulai">Jam Mulai</label>
+                        <input id="jam_mulai" type="time" wire:model.live="jam_mulai"
+                            class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 @error('jam_mulai') border-red-500 @enderror">
+                        @error('jam_mulai')
+                            <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div>
+                        <label class="mb-1.5 block text-sm font-medium text-slate-700" for="jam_selesai">Jam
+                            Selesai</label>
+                        <input id="jam_selesai" type="time" wire:model.live="jam_selesai"
+                            class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 @error('jam_selesai') border-red-500 @enderror">
+                        @error('jam_selesai')
+                            <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+                </div>
+
+                <div>
+                    <label class="mb-1.5 block text-sm font-medium text-slate-700" for="keterangan">Keterangan</label>
+                    <textarea id="keterangan" rows="4" wire:model.live="keterangan"
+                        class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 @error('keterangan') border-red-500 @enderror"
+                        placeholder="Contoh: Seminar proposal, rapat himpunan, dan lain-lain"></textarea>
+                    @error('keterangan')
+                        <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
+                    Jadwal yang dipilih akan divalidasi secara realtime agar tidak bentrok dengan reservasi lain pada
+                    ruangan dan tanggal yang sama.
+                </div>
+
+                <div class="flex flex-col gap-3 sm:flex-row sm:justify-end">
+                    <button type="submit"
+                        class="inline-flex items-center justify-center rounded-lg bg-teal-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-700">
+                        Simpan Reservasi
+                    </button>
+                </div>
+            </form>
+        </section>
+    </div>
+</div>
