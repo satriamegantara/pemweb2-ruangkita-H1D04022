@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Fasilitas;
 use App\Models\Ruangan;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
@@ -30,6 +31,8 @@ new #[Title('Kelola Ruangan')] class extends Component {
     public TemporaryUploadedFile|string|null $foto = null;
 
     public string $existingFoto = '';
+
+    public string $fasilitas_nama = '';
 
     public function updatedSearch(): void
     {
@@ -173,7 +176,7 @@ new #[Title('Kelola Ruangan')] class extends Component {
 
     public function resetForm(): void
     {
-        $this->reset(['editingId', 'nama', 'kapasitas', 'foto', 'existingFoto']);
+        $this->reset(['editingId', 'nama', 'kapasitas', 'foto', 'existingFoto', 'fasilitas_nama']);
         $this->jam_buka = '07:00';
         $this->jam_tutup = '21:00';
         $this->resetErrorBag();
@@ -191,6 +194,77 @@ new #[Title('Kelola Ruangan')] class extends Component {
         }
 
         return null;
+    }
+
+    #[Computed]
+    public function ruanganAktif(): ?Ruangan
+    {
+        if (! $this->editingId) {
+            return null;
+        }
+
+        return Ruangan::query()
+            ->with(['fasilitas' => fn ($query) => $query->orderBy('nama')])
+            ->find($this->editingId);
+    }
+
+    public function addFasilitas(): void
+    {
+        if (! $this->editingId) {
+            return;
+        }
+
+        $validated = $this->validate([
+            'fasilitas_nama' => ['required', 'string', 'max:255'],
+        ], [
+            'fasilitas_nama.required' => 'Nama fasilitas wajib diisi.',
+            'fasilitas_nama.max' => 'Nama fasilitas terlalu panjang.',
+        ]);
+
+        $nama = trim($validated['fasilitas_nama']);
+        $ruangan = Ruangan::query()->findOrFail($this->editingId);
+
+        Fasilitas::updateOrCreate(
+            [
+                'ruangan_id' => $ruangan->id,
+                'nama' => $nama,
+            ],
+            [
+                'ruangan_id' => $ruangan->id,
+                'nama' => $nama,
+            ],
+        );
+
+        $this->fasilitas_nama = '';
+
+        $this->dispatch(
+            'notify',
+            type: 'success',
+            title: 'Fasilitas ditambahkan',
+            message: "Fasilitas {$nama} berhasil ditambahkan ke {$ruangan->nama}.",
+        );
+    }
+
+    public function deleteFasilitas(int $id): void
+    {
+        if (! $this->editingId) {
+            return;
+        }
+
+        $fasilitas = Fasilitas::query()
+            ->where('ruangan_id', $this->editingId)
+            ->findOrFail($id);
+
+        $nama = $fasilitas->nama;
+
+        $fasilitas->delete();
+
+        $this->dispatch(
+            'notify',
+            type: 'success',
+            title: 'Fasilitas dihapus',
+            message: "Fasilitas {$nama} berhasil dihapus.",
+        );
     }
 
     #[Computed]
@@ -317,6 +391,57 @@ new #[Title('Kelola Ruangan')] class extends Component {
                         class="inline-flex w-full items-center justify-center rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-700">
                         {{ $editingId ? 'Simpan Perubahan' : 'Tambah Ruangan' }}
                     </button>
+
+                    @if ($this->ruanganAktif)
+                        <div class="mt-6 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4">
+                            <div class="flex items-center justify-between gap-3">
+                                <div>
+                                    <h3 class="text-sm font-semibold text-slate-900">Fasilitas Ruangan</h3>
+                                    <p class="mt-1 text-xs text-slate-500">Kelola fasilitas untuk {{ $this->ruanganAktif->nama }}.</p>
+                                </div>
+                                <span class="rounded-full bg-white px-3 py-1 text-xs font-medium text-slate-600">
+                                    {{ $this->ruanganAktif->fasilitas->count() }} fasilitas
+                                </span>
+                            </div>
+
+                            <form wire:submit="addFasilitas" class="mt-4 flex gap-2">
+                                <input
+                                    type="text"
+                                    wire:model.live="fasilitas_nama"
+                                    class="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 @error('fasilitas_nama') border-red-500 @enderror"
+                                    placeholder="Tambah fasilitas baru"
+                                >
+                                <button
+                                    type="submit"
+                                    class="rounded-lg bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-800"
+                                >
+                                    Tambah
+                                </button>
+                            </form>
+                            @error('fasilitas_nama')
+                                <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
+                            @enderror
+
+                            <div class="mt-4 flex flex-wrap gap-2">
+                                @forelse ($this->ruanganAktif->fasilitas as $fasilitas)
+                                    <span class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-sm text-slate-700 shadow-sm ring-1 ring-slate-200">
+                                        {{ $fasilitas->nama }}
+                                        <button
+                                            type="button"
+                                            wire:click="deleteFasilitas({{ $fasilitas->id }})"
+                                            wire:confirm="Hapus fasilitas ini?"
+                                            class="text-rose-600 transition hover:text-rose-700"
+                                            aria-label="Hapus fasilitas {{ $fasilitas->nama }}"
+                                        >
+                                            ×
+                                        </button>
+                                    </span>
+                                @empty
+                                    <p class="text-sm text-slate-500">Belum ada fasilitas untuk ruangan ini.</p>
+                                @endforelse
+                            </div>
+                        </div>
+                    @endif
                 </form>
             </section>
 
