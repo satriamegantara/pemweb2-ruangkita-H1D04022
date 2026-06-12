@@ -16,8 +16,7 @@ dan admin untuk mengelola persetujuan, ruangan, serta fasilitas.
 - **Jadwal Harian** — lihat ketersediaan ruangan per jam untuk tanggal tertentu
 
 ### Untuk Admin
-- **Manajemen Ruangan** — CRUD ruangan dengan search, filter kapasitas, pagination
-- **Upload Foto Ruangan** — kelola foto ruangan
+- **Manajemen Ruangan** — CRUD ruangan dengan search, filter kapasitas, pagination, dan upload foto
 - **Manajemen Fasilitas** — kelola daftar fasilitas per ruangan
 - **Manajemen Pemohon** — lihat daftar akun pemohon
 - **Persetujuan Reservasi** — setujui/tolak permintaan reservasi dengan re-check bentrok
@@ -48,30 +47,35 @@ dan admin untuk mengelola persetujuan, ruangan, serta fasilitas.
 
 ## Langkah Instalasi
 
-### 1. Clone Repository
+Ikuti semua langkah berikut secara berurutan agar aplikasi dapat dijalankan.
+
+### Langkah 1 — Clone Repository
 
 ```bash
 git clone <url-repository-ini>
 cd ruangkita
 ```
 
-### 2. Install Dependency
+### Langkah 2 — Install Dependency PHP
 
 ```bash
 composer install
+```
+
+### Langkah 3 — Install Dependency Frontend
+
+```bash
 npm install
 ```
 
-### 3. Salin File Environment
+### Langkah 4 — Salin dan Konfigurasi Environment
 
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-### 4. Konfigurasi Database
-
-Edit file `.env` dan sesuaikan bagian berikut:
+Kemudian buka file `.env` dan sesuaikan konfigurasi database:
 
 ```env
 DB_CONNECTION=mysql
@@ -82,47 +86,79 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Buat database baru dengan nama yang sesuai di MySQL/MariaDB.
+**Pastikan:**
+- MySQL/MariaDB sudah berjalan
+- Database `ruangkita` sudah dibuat (atau biarkan kosong, migrasi akan otomatis membuat database jika `DB_DATABASE` tidak ditemukan)
 
-### 5. Migrasi & Seed Database
+### Langkah 5 — Migrasi dan Seed Database
 
 ```bash
 php artisan migrate --seed
 ```
 
-Seeder akan menambahkan akun admin, beberapa pemohon, ruangan, dan data reservasi contoh.
+Perintah ini akan:
+1. Membuat semua tabel: `users`, `cache`, `jobs`, `ruangan`, `fasilitas`, `reservasi`
+2. Menambahkan data awal: 1 admin, 4 pemohon, 5+ ruangan dengan fasilitas, dan beberapa contoh reservasi
 
-**Akun admin default** (dari seeder):
-- Email: `admin@ruangkita.test`
-- Password: `password`
-
-### 6. Storage Link
+### Langkah 6 — Buat Symbolic Link Storage
 
 ```bash
 php artisan storage:link
 ```
 
-Perintah ini membuat symbolic link dari `public/storage` ke `storage/app/public` agar foto ruangan dapat diakses melalui URL.
+Perintah ini membuat link agar foto ruangan yang diunggah dapat diakses melalui URL `http://localhost/storage/...`
 
-### 7. Build Aset Frontend
+### Langkah 7 — Jalankan Development Server
 
-Untuk development:
-```bash
-npm run dev
-```
-
-Untuk production:
-```bash
-npm run build
-```
-
-### 8. Jalankan Aplikasi
+Buka terminal di folder `ruangkita` dan jalankan:
 
 ```bash
 php artisan serve
 ```
 
+Kemudian buka terminal baru (atau tab baru) dan jalankan:
+
+```bash
+npm run dev
+```
+
 Buka browser ke [http://localhost:8000](http://localhost:8000).
+
+**Catatan:** Untuk production, ganti `npm run dev` dengan `npm run build` untuk kompilasi aset.
+
+---
+
+## Akun Demo
+
+Data berikut otomatis dibuat saat menjalankan `php artisan migrate --seed`. Password untuk semua akun: **`password`**
+
+| Role | Nama | Email | NIM/NIP |
+|------|------|-------|---------|
+| Admin | Administrator | `admin@ruangkita.test` | `199103302019031017` |
+| Pemohon | Satria Megantara | `satria@ruangkita.test` | `H1D024022` |
+| Pemohon | Pancar Wahyu | `pancar@ruangkita.test` | `H1D024018` |
+| Pemohon | Yoga Adi | `yoga@ruangkita.test` | `H1D024118` |
+| Pemohon | Hanna Aufa | `hanna@ruangkita.test` | `H1E023010` |
+
+---
+
+## Cara Menggunakan
+
+### Sebagai Admin
+1. Buka [http://localhost:8000](http://localhost:8000)
+2. Klik **Login** dan masuk dengan `admin@ruangkita.test` / `password`
+3. Di menu admin, Anda dapat:
+   - **Kelola Ruangan** — tambah/edit ruangan, upload foto, kelola fasilitas
+   - **Kelola Pemohon** — lihat daftar semua pemohon
+   - **Persetujuan Reservasi** — setujui atau tolak reservasi yang masuk
+
+### Sebagai Pemohon
+1. Klik **Daftar** atau **Login** (jika belum punya akun)
+2. Isi form registrasi atau masuk dengan akun pemohon
+3. Klik **Buat Reservasi** → pilih ruangan, tanggal, jam mulai-selesai
+4. Cek panel **Slot Tersedia** di sebelah kanan untuk melihat jam yang kosong
+5. Klik **Simpan Reservasi** — status awal: `menunggu`
+6. Cek **Daftar Reservasi** untuk melihat status dan membatalkan
 
 ---
 
@@ -131,31 +167,34 @@ Buka browser ke [http://localhost:8000](http://localhost:8000).
 ```
 app/
   Models/          Eloquent models (User, Ruangan, Fasilitas, Reservasi)
-  Rules/           Custom validation rules (NoJadwalBentrok)
-  Http/Middleware/ Middleware (EnsureUserIsAdmin)
+  Rules/           Custom validation (NoJadwalBentrok)
+  Http/Middleware/ EnsureUserIsAdmin
 database/
   migrations/      Skema tabel
-  seeders/         Data awal
+  seeders/         Data awal (User, Ruangan, Reservasi)
 resources/views/
-  layouts/         Layout utama aplikasi
-  pages/           Halaman (landing, auth, admin/*, reservasi/*, jadwal/*)
+  layouts/         Layout utama (navbar, footer)
+  pages/           Halaman Livewire SFC (landing, auth, admin, reservasi, jadwal)
   components/      Komponen reusable (toast, slot-tersedia Island)
 routes/
-  web.php          Definisi route aplikasi
+  web.php          Route aplikasi
 ```
 
 ---
 
-## Akun Demo (Setelah Seeder)
+## Teknologi yang Digunakan
 
-| Role | Email | Password |
-|------|-------|----------|
-| Admin | `admin@ruangkita.test` | `password` |
-| Pemohon | `budi@ruangkita.test` | `password` |
-| Pemohon | `siti@ruangkita.test` | `password` |
+| Teknologi | Versi | Fungsi |
+|-----------|-------|--------|
+| Laravel | 13 | Backend framework |
+| Livewire | 4 | Frontend SPA tanpa JavaScript manual (SFC, Island, Slots) |
+| Tailwind CSS | 4 | Styling |
+| MySQL/MariaDB | 8+ | Database |
+| PHP | 8.3+ | Runtime |
+| Vite | 5 | Asset bundling |
 
 ---
 
 ## Lisensi
 
-Proyek ini dibuat untuk tugas kuliah Pemrograman Web II. Bebas digunakan untuk keperluan pembelajaran.
+Proyek ini dibuat untuk tugas kuliah **Pemrograman Web II**.
