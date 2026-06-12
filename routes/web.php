@@ -13,6 +13,7 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::livewire('/dashboard', 'pages::dashboard')->name('dashboard');
     Route::livewire('/reservasi', 'pages::reservasi.index')->name('reservasi.index');
+    Route::livewire('/reservasi/buat', 'pages::reservasi.create')->name('reservasi.create');
     Route::livewire('/jadwal', 'pages::jadwal.harian')->name('jadwal.harian');
 
     Route::post('/logout', function () {
