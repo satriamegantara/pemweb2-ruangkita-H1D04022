@@ -91,22 +91,16 @@ new #[Title('Jadwal Harian')] class extends Component {
     {
         $jadwal = $this->jadwal;
 
-        $kosong = 0;
-        $menunggu = 0;
-        $disetujui = 0;
+        $tersedia = 0;
+        $tidakTersedia = 0;
 
         foreach ($jadwal as $slot) {
-            match ($slot['status']) {
-                'menunggu' => $menunggu++,
-                'disetujui' => $disetujui++,
-                default => $kosong++,
-            };
+            $slot['status'] === 'kosong' ? $tersedia++ : $tidakTersedia++;
         }
 
         return [
-            'kosong' => $kosong,
-            'menunggu' => $menunggu,
-            'disetujui' => $disetujui,
+            'tersedia' => $tersedia,
+            'tidak_tersedia' => $tidakTersedia,
             'total' => count($jadwal),
         ];
     }
@@ -162,12 +156,12 @@ new #[Title('Jadwal Harian')] class extends Component {
 
         <!-- Ringkasan -->
         @if ($this->ruangan)
-            <div class="grid gap-3 sm:grid-cols-3">
+            <div class="grid gap-3 sm:grid-cols-2">
                 <div class="rounded-2xl border border-emerald-200 bg-emerald-50 p-4">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-xs font-medium text-emerald-700">Tersedia</p>
-                            <p class="mt-1 text-2xl font-bold text-emerald-700">{{ $this->ringkasan['kosong'] }}</p>
+                            <p class="mt-1 text-2xl font-bold text-emerald-700">{{ $this->ringkasan['tersedia'] }}</p>
                         </div>
                         <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700">
                             <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -176,28 +170,15 @@ new #[Title('Jadwal Harian')] class extends Component {
                         </span>
                     </div>
                 </div>
-                <div class="rounded-2xl border border-amber-200 bg-amber-50 p-4">
+                <div class="rounded-2xl border border-rose-200 bg-rose-50 p-4">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-xs font-medium text-amber-700">Menunggu</p>
-                            <p class="mt-1 text-2xl font-bold text-amber-700">{{ $this->ringkasan['menunggu'] }}</p>
+                            <p class="text-xs font-medium text-rose-700">Tidak Tersedia</p>
+                            <p class="mt-1 text-2xl font-bold text-rose-700">{{ $this->ringkasan['tidak_tersedia'] }}</p>
                         </div>
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-amber-100 text-amber-700">
+                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-rose-100 text-rose-700">
                             <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
-                            </svg>
-                        </span>
-                    </div>
-                </div>
-                <div class="rounded-2xl border border-sky-200 bg-sky-50 p-4">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-xs font-medium text-sky-700">Disetujui</p>
-                            <p class="mt-1 text-2xl font-bold text-sky-700">{{ $this->ringkasan['disetujui'] }}</p>
-                        </div>
-                        <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-sky-100 text-sky-700">
-                            <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                                <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd" />
                             </svg>
                         </span>
                     </div>
@@ -225,9 +206,8 @@ new #[Title('Jadwal Harian')] class extends Component {
                             @forelse ($this->jadwal as $slot)
                                 @php
                                     $palette = match ($slot['status']) {
-                                        'disetujui' => ['bg' => 'bg-sky-50', 'text' => 'text-sky-700', 'border' => 'border-sky-200', 'dot' => 'bg-sky-500'],
-                                        'menunggu' => ['bg' => 'bg-amber-50', 'text' => 'text-amber-700', 'border' => 'border-amber-200', 'dot' => 'bg-amber-500'],
-                                        default => ['bg' => 'bg-emerald-50', 'text' => 'text-emerald-700', 'border' => 'border-emerald-200', 'dot' => 'bg-emerald-500'],
+                                        'kosong' => ['bg' => 'bg-emerald-50', 'text' => 'text-emerald-700', 'border' => 'border-emerald-200', 'dot' => 'bg-emerald-500'],
+                                        default => ['bg' => 'bg-rose-50', 'text' => 'text-rose-700', 'border' => 'border-rose-200', 'dot' => 'bg-rose-500'],
                                     };
                                 @endphp
                                 <tr wire:key="slot-{{ $slot['jam_mulai'] }}" class="hover:bg-slate-50/50">
@@ -237,7 +217,7 @@ new #[Title('Jadwal Harian')] class extends Component {
                                     <td class="px-6 py-4">
                                         <span class="inline-flex items-center gap-2 rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize {{ $palette['bg'] }} {{ $palette['text'] }} {{ $palette['border'] }}">
                                             <span class="h-1.5 w-1.5 rounded-full {{ $palette['dot'] }}"></span>
-                                            {{ $slot['status'] === 'kosong' ? 'Tersedia' : $slot['status'] }}
+                                            {{ $slot['status'] === 'kosong' ? 'Tersedia' : 'Tidak Tersedia' }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-slate-700">
