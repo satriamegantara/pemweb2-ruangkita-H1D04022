@@ -154,7 +154,7 @@ new #[Title('Jadwal Harian')] class extends Component {
             @if ($this->ruangan && $this->tanggal)
                 <p class="mt-4 text-xs text-slate-500">
                     Menampilkan jadwal <strong>{{ $this->ruangan->nama }}</strong>
-                    untuk {{ Carbon\Carbon::parse($this->tanggal)->translatedFormat('l, d F Y') }}
+                    untuk {{ \Carbon\Carbon::parse($this->tanggal)->translatedFormat('l, d F Y') }}
                     ({{ substr($this->ruangan->jam_buka, 0, 5) }} — {{ substr($this->ruangan->jam_tutup, 0, 5) }})
                 </p>
             @endif
@@ -254,7 +254,7 @@ new #[Title('Jadwal Harian')] class extends Component {
                                                 {{ substr($slot['reservasi']->jam_mulai, 0, 5) }} — {{ substr($slot['reservasi']->jam_selesai, 0, 5) }}
                                             </div>
                                             @if ($slot['reservasi']->keterangan)
-                                                <div class="mt-1 text-xs text-slate-600">{{ Str::limit($slot['reservasi']->keterangan, 60) }}</div>
+                                                <div class="mt-1 text-xs text-slate-600">{{ \Illuminate\Support\Str::limit($slot['reservasi']->keterangan, 60) }}</div>
                                             @endif
                                         @else
                                             <span class="text-slate-400">—</span>

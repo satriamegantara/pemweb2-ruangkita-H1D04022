@@ -60,8 +60,8 @@ new #[Isolate] class extends Component {
                 ->get(['jam_mulai', 'jam_selesai']);
 
             foreach ($reservasi as $r) {
-                $start = (int) Carbon::parse($r->jam_mulai)->format('H');
-                $end = (int) Carbon::parse($r->jam_selesai)->format('H');
+                $start = (int) \Carbon\Carbon::parse($r->jam_mulai)->format('H');
+                $end = (int) \Carbon\Carbon::parse($r->jam_selesai)->format('H');
 
                 for ($h = $start; $h < $end; $h++) {
                     if (!isset($occupied[$h])) {
@@ -118,7 +118,7 @@ new #[Isolate] class extends Component {
             <p class="text-sm font-medium text-teal-700">Slot Tersedia Hari Ini</p>
             <h2 class="mt-1 text-lg font-semibold text-slate-900">
                 @if ($this->tanggal)
-                    {{ Carbon\Carbon::parse($this->tanggal)->translatedFormat('l, d F Y') }}
+                    {{ \Carbon\Carbon::parse($this->tanggal)->translatedFormat('l, d F Y') }}
                 @else
                     Pilih tanggal
                 @endif
