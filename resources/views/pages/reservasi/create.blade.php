@@ -35,6 +35,13 @@ new #[Title('Buat Reservasi')] class extends Component {
             $this->validateOnly($property);
             $this->validateOnly('jam_selesai');
 
+            if (in_array($property, ['ruangan_id', 'tanggal'], true)) {
+                $this->dispatch('slot-tersedia-refresh',
+                    ruanganId: $this->ruangan_id,
+                    tanggal: $this->tanggal,
+                );
+            }
+
             return;
         }
 
@@ -177,8 +184,8 @@ new #[Title('Buat Reservasi')] class extends Component {
             </div>
         </div>
 
-        <section class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <form wire:submit="save" class="space-y-5">
+        <section class="grid gap-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm lg:grid-cols-3">
+            <form wire:submit="save" class="space-y-5 lg:col-span-2">
                 <div class="grid gap-5 lg:grid-cols-2">
                     <div>
                         <label class="mb-1.5 block text-sm font-medium text-slate-700" for="ruangan_id">Ruangan</label>
@@ -253,6 +260,13 @@ new #[Title('Buat Reservasi')] class extends Component {
                     </button>
                 </div>
             </form>
+
+            <div class="lg:col-span-1">
+                <livewire:components::slot-tersedia
+                    :ruangan-id="$this->ruangan_id"
+                    tanggal="{{ $this->tanggal }}"
+                />
+            </div>
         </section>
     </div>
 </div>

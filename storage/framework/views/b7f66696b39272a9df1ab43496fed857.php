@@ -142,4 +142,4 @@ unset($__defined_vars, $__key, $__value); ?>
             });
         });
     </script>
-</div><?php /**PATH D:\Informatika\Sem 4\Pemrograman Web II\ruangkita\resources\views/components/toast.blade.php ENDPATH**/ ?>
+</div><?php /**PATH D:\Informatika\Sem 4\Pemrograman Web II\ruangkita\resources\views\components\toast.blade.php ENDPATH**/ ?>

@@ -129,4 +129,4 @@ $scrollIntoViewJsSnippet = ($scrollTo !== false)
         </nav>
     <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 </div>
-<?php /**PATH D:\Informatika\Sem 4\Pemrograman Web II\ruangkita\vendor\livewire\livewire\src\Features\SupportPagination/views/tailwind.blade.php ENDPATH**/ ?>
+<?php /**PATH D:\Informatika\Sem 4\Pemrograman Web II\ruangkita\vendor\livewire\livewire\src\Features\SupportPagination\views\tailwind.blade.php ENDPATH**/ ?>
