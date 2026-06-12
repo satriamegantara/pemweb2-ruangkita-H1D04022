@@ -9,6 +9,7 @@ dan admin untuk mengelola persetujuan, ruangan, serta fasilitas.
 ## Fitur Utama
 
 ### Untuk Pemohon
+
 - **Registrasi & Login** — membuat akun dengan peran otomatis `pemohon`
 - **Buat Reservasi** — pilih ruangan, tanggal, dan jam; validasi bentrok realtime
 - **Slot Tersedia** (Livewire Island) — panel yang menampilkan slot kosong vs terisi
@@ -16,6 +17,7 @@ dan admin untuk mengelola persetujuan, ruangan, serta fasilitas.
 - **Jadwal Harian** — lihat ketersediaan ruangan per jam untuk tanggal tertentu
 
 ### Untuk Admin
+
 - **Manajemen Ruangan** — CRUD ruangan dengan search, filter kapasitas, pagination, dan upload foto
 - **Manajemen Fasilitas** — kelola daftar fasilitas per ruangan
 - **Manajemen Pemohon** — lihat daftar akun pemohon
@@ -23,6 +25,7 @@ dan admin untuk mengelola persetujuan, ruangan, serta fasilitas.
 - **Jadwal Harian** — lihat jadwal ruangan dengan grid per jam
 
 ### Fitur Umum
+
 - Notifikasi toast global (Livewire dispatch)
 - Middleware autentikasi & role (admin/pemohon)
 - Validasi realtime dengan `wire:model.live`
@@ -32,15 +35,16 @@ dan admin untuk mengelola persetujuan, ruangan, serta fasilitas.
 
 ## Kebutuhan Sistem
 
-| Komponen | Versi Minimum |
-|----------|---------------|
-| PHP | 8.3+ |
-| Composer | 2.x |
-| Node.js & npm | 18+ |
-| Database | MySQL 8 / MariaDB 10.6+ (atau SQLite untuk development) |
-| Web Server | Apache / Nginx (atau `php artisan serve` untuk development) |
+| Komponen      | Versi Minimum                                               |
+| ------------- | ----------------------------------------------------------- |
+| PHP           | 8.3+                                                        |
+| Composer      | 2.x                                                         |
+| Node.js & npm | 18+                                                         |
+| Database      | MySQL 8 / MariaDB 10.6+ (atau SQLite untuk development)     |
+| Web Server    | Apache / Nginx (atau `php artisan serve` untuk development) |
 
 **Ekstensi PHP yang dibutuhkan:**
+
 - BCMath, Ctype, Fileinfo, JSON, Mbstring, OpenSSL, PDO, Tokenizer, XML
 
 ---
@@ -87,6 +91,7 @@ DB_PASSWORD=
 ```
 
 **Pastikan:**
+
 - MySQL/MariaDB sudah berjalan
 - Database `ruangkita` sudah dibuat (atau biarkan kosong, migrasi akan otomatis membuat database jika `DB_DATABASE` tidak ditemukan)
 
@@ -97,6 +102,7 @@ php artisan migrate --seed
 ```
 
 Perintah ini akan:
+
 1. Membuat semua tabel: `users`, `cache`, `jobs`, `ruangan`, `fasilitas`, `reservasi`
 2. Menambahkan data awal: 1 admin, 4 pemohon, 5+ ruangan dengan fasilitas, dan beberapa contoh reservasi
 
@@ -105,8 +111,6 @@ Perintah ini akan:
 ```bash
 php artisan storage:link
 ```
-
-Perintah ini membuat link agar foto ruangan yang diunggah dapat diakses melalui URL `http://localhost/storage/...`
 
 ### Langkah 7 — Jalankan Development Server
 
@@ -132,27 +136,29 @@ Buka browser ke [http://localhost:8000](http://localhost:8000).
 
 Data berikut otomatis dibuat saat menjalankan `php artisan migrate --seed`. Password untuk semua akun: **`password`**
 
-| Role | Nama | Email | NIM/NIP |
-|------|------|-------|---------|
-| Admin | Administrator | `admin@ruangkita.test` | `199103302019031017` |
-| Pemohon | Satria Megantara | `satria@ruangkita.test` | `H1D024022` |
-| Pemohon | Pancar Wahyu | `pancar@ruangkita.test` | `H1D024018` |
-| Pemohon | Yoga Adi | `yoga@ruangkita.test` | `H1D024118` |
-| Pemohon | Hanna Aufa | `hanna@ruangkita.test` | `H1E023010` |
+| Role    | Nama             | Email                   | NIM/NIP              |
+| ------- | ---------------- | ----------------------- | -------------------- |
+| Admin   | Administrator    | `admin@ruangkita.test`  | `199103302019031017` |
+| Pemohon | Satria Megantara | `satria@ruangkita.test` | `H1D024022`          |
+| Pemohon | Pancar Wahyu     | `pancar@ruangkita.test` | `H1D024018`          |
+| Pemohon | Yoga Adi         | `yoga@ruangkita.test`   | `H1D024118`          |
+| Pemohon | Hanna Aufa       | `hanna@ruangkita.test`  | `H1E023010`          |
 
 ---
 
 ## Cara Menggunakan
 
 ### Sebagai Admin
+
 1. Buka [http://localhost:8000](http://localhost:8000)
 2. Klik **Login** dan masuk dengan `admin@ruangkita.test` / `password`
 3. Di menu admin, Anda dapat:
-   - **Kelola Ruangan** — tambah/edit ruangan, upload foto, kelola fasilitas
-   - **Kelola Pemohon** — lihat daftar semua pemohon
-   - **Persetujuan Reservasi** — setujui atau tolak reservasi yang masuk
+    - **Kelola Ruangan** — tambah/edit ruangan, upload foto, kelola fasilitas
+    - **Kelola Pemohon** — lihat daftar semua pemohon
+    - **Persetujuan Reservasi** — setujui atau tolak reservasi yang masuk
 
 ### Sebagai Pemohon
+
 1. Klik **Daftar** atau **Login** (jika belum punya akun)
 2. Isi form registrasi atau masuk dengan akun pemohon
 3. Klik **Buat Reservasi** → pilih ruangan, tanggal, jam mulai-selesai
@@ -184,14 +190,14 @@ routes/
 
 ## Teknologi yang Digunakan
 
-| Teknologi | Versi | Fungsi |
-|-----------|-------|--------|
-| Laravel | 13 | Backend framework |
-| Livewire | 4 | Frontend SPA tanpa JavaScript manual (SFC, Island, Slots) |
-| Tailwind CSS | 4 | Styling |
-| MySQL/MariaDB | 8+ | Database |
-| PHP | 8.3+ | Runtime |
-| Vite | 5 | Asset bundling |
+| Teknologi     | Versi | Fungsi                                                    |
+| ------------- | ----- | --------------------------------------------------------- |
+| Laravel       | 13    | Backend framework                                         |
+| Livewire      | 4     | Frontend SPA tanpa JavaScript manual (SFC, Island, Slots) |
+| Tailwind CSS  | 4     | Styling                                                   |
+| MySQL/MariaDB | 8+    | Database                                                  |
+| PHP           | 8.3+  | Runtime                                                   |
+| Vite          | 5     | Asset bundling                                            |
 
 ---
 
