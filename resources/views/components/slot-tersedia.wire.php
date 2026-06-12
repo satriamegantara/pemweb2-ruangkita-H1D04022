@@ -55,7 +55,7 @@ new #[Isolate] class extends Component {
             // Hanya hitung yang sudah disetujui
             $reservasi = Reservasi::query()
                 ->where('ruangan_id', $this->ruanganId)
-                ->where('tanggal', $this->tanggal)
+                ->whereDate('tanggal', \Carbon\Carbon::parse($this->tanggal))
                 ->where('status', 'disetujui')
                 ->get(['jam_mulai', 'jam_selesai']);
 

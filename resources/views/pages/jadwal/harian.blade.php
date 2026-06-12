@@ -50,7 +50,7 @@ new #[Title('Jadwal Harian')] class extends Component {
         $reservasi = Reservasi::query()
             ->with('user')
             ->where('ruangan_id', $this->ruanganId)
-            ->where('tanggal', $this->tanggal)
+            ->whereDate('tanggal', \Carbon\Carbon::parse($this->tanggal))
             ->whereIn('status', ['menunggu', 'disetujui'])
             ->orderBy('jam_mulai')
             ->get();

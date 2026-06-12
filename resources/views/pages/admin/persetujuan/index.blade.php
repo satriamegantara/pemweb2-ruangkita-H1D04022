@@ -64,7 +64,7 @@ new #[Title('Persetujuan Reservasi')] class extends Component {
         // Re-check bentrok untuk mencegah race condition
         $bentrok = Reservasi::query()
             ->where('ruangan_id', $reservasi->ruangan_id)
-            ->where('tanggal', $reservasi->tanggal)
+            ->whereDate('tanggal', $reservasi->tanggal)
             ->where('status', 'disetujui')
             ->where('id', '!=', $id)
             ->where('jam_mulai', '<', $reservasi->jam_selesai)
