@@ -1,58 +1,161 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# RuangKita
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi reservasi ruangan berbasis web yang dibangun dengan **Laravel 13** dan **Livewire 4**.
+RuangKita memudahkan pemohon (dosen/mahasiswa) untuk mengajukan permohonan reservasi ruangan
+dan admin untuk mengelola persetujuan, ruangan, serta fasilitas.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Fitur Utama
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Untuk Pemohon
+- **Registrasi & Login** — membuat akun dengan peran otomatis `pemohon`
+- **Buat Reservasi** — pilih ruangan, tanggal, dan jam; validasi bentrok realtime
+- **Slot Tersedia** (Livewire Island) — panel yang menampilkan slot kosong vs terisi
+- **Riwayat Reservasi** — lihat status reservasi (menunggu/disetujui/ditolak), filter, search, dan batalkan
+- **Jadwal Harian** — lihat ketersediaan ruangan per jam untuk tanggal tertentu
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Untuk Admin
+- **Manajemen Ruangan** — CRUD ruangan dengan search, filter kapasitas, pagination
+- **Upload Foto Ruangan** — kelola foto ruangan
+- **Manajemen Fasilitas** — kelola daftar fasilitas per ruangan
+- **Manajemen Pemohon** — lihat daftar akun pemohon
+- **Persetujuan Reservasi** — setujui/tolak permintaan reservasi dengan re-check bentrok
+- **Jadwal Harian** — lihat jadwal ruangan dengan grid per jam
 
-## Learning Laravel
+### Fitur Umum
+- Notifikasi toast global (Livewire dispatch)
+- Middleware autentikasi & role (admin/pemohon)
+- Validasi realtime dengan `wire:model.live`
+- Desain responsif dengan Tailwind CSS 4
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Kebutuhan Sistem
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+| Komponen | Versi Minimum |
+|----------|---------------|
+| PHP | 8.3+ |
+| Composer | 2.x |
+| Node.js & npm | 18+ |
+| Database | MySQL 8 / MariaDB 10.6+ (atau SQLite untuk development) |
+| Web Server | Apache / Nginx (atau `php artisan serve` untuk development) |
 
-## Agentic Development
+**Ekstensi PHP yang dibutuhkan:**
+- BCMath, Ctype, Fileinfo, JSON, Mbstring, OpenSSL, PDO, Tokenizer, XML
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+---
+
+## Langkah Instalasi
+
+### 1. Clone Repository
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone <url-repository-ini>
+cd ruangkita
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Install Dependency
 
-## Contributing
+```bash
+composer install
+npm install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Salin File Environment
 
-## Code of Conduct
+```bash
+cp .env.example .env
+php artisan key:generate
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 4. Konfigurasi Database
 
-## Security Vulnerabilities
+Edit file `.env` dan sesuaikan bagian berikut:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=ruangkita
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-## License
+Buat database baru dengan nama yang sesuai di MySQL/MariaDB.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 5. Migrasi & Seed Database
+
+```bash
+php artisan migrate --seed
+```
+
+Seeder akan menambahkan akun admin, beberapa pemohon, ruangan, dan data reservasi contoh.
+
+**Akun admin default** (dari seeder):
+- Email: `admin@ruangkita.test`
+- Password: `password`
+
+### 6. Storage Link
+
+```bash
+php artisan storage:link
+```
+
+Perintah ini membuat symbolic link dari `public/storage` ke `storage/app/public` agar foto ruangan dapat diakses melalui URL.
+
+### 7. Build Aset Frontend
+
+Untuk development:
+```bash
+npm run dev
+```
+
+Untuk production:
+```bash
+npm run build
+```
+
+### 8. Jalankan Aplikasi
+
+```bash
+php artisan serve
+```
+
+Buka browser ke [http://localhost:8000](http://localhost:8000).
+
+---
+
+## Struktur Proyek Singkat
+
+```
+app/
+  Models/          Eloquent models (User, Ruangan, Fasilitas, Reservasi)
+  Rules/           Custom validation rules (NoJadwalBentrok)
+  Http/Middleware/ Middleware (EnsureUserIsAdmin)
+database/
+  migrations/      Skema tabel
+  seeders/         Data awal
+resources/views/
+  layouts/         Layout utama aplikasi
+  pages/           Halaman (landing, auth, admin/*, reservasi/*, jadwal/*)
+  components/      Komponen reusable (toast, slot-tersedia Island)
+routes/
+  web.php          Definisi route aplikasi
+```
+
+---
+
+## Akun Demo (Setelah Seeder)
+
+| Role | Email | Password |
+|------|-------|----------|
+| Admin | `admin@ruangkita.test` | `password` |
+| Pemohon | `budi@ruangkita.test` | `password` |
+| Pemohon | `siti@ruangkita.test` | `password` |
+
+---
+
+## Lisensi
+
+Proyek ini dibuat untuk tugas kuliah Pemrograman Web II. Bebas digunakan untuk keperluan pembelajaran.
