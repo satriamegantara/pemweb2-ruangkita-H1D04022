@@ -36,7 +36,8 @@ new #[Title('Buat Reservasi')] class extends Component {
             $this->validateOnly('jam_selesai');
 
             if (in_array($property, ['ruangan_id', 'tanggal'], true)) {
-                $this->dispatch('slot-tersedia-refresh',
+                $this->dispatch(
+                    'slot-tersedia-refresh',
                     ruanganId: $this->ruangan_id,
                     tanggal: $this->tanggal,
                 );
@@ -203,7 +204,8 @@ new #[Title('Buat Reservasi')] class extends Component {
 
                         @if ($this->jamBukaRuangan && $this->jamTutupRuangan)
                             <p class="mt-2 text-xs text-slate-500">Jam operasional ruangan: {{ $this->jamBukaRuangan }} -
-                                {{ $this->jamTutupRuangan }}</p>
+                                {{ $this->jamTutupRuangan }}
+                            </p>
                         @endif
                     </div>
 
@@ -262,11 +264,8 @@ new #[Title('Buat Reservasi')] class extends Component {
             </form>
 
             <div class="lg:col-span-1">
-                <livewire:components::slot-tersedia
-                    :ruangan-id="$this->ruangan_id"
-                    tanggal="{{ $this->tanggal }}"
-                    wire:key="slot-{{ $this->ruangan_id ?? 'none' }}-{{ $this->tanggal }}"
-                />
+                <livewire:components.slot-tersedia :ruangan-id="$this->ruangan_id" :tanggal="$this->tanggal"
+                    :key="'slot-' . ($this->ruangan_id ?? 'none') . '-' . $this->tanggal" />
             </div>
         </section>
     </div>
