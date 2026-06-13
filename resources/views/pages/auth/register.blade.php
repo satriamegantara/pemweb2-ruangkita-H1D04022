@@ -6,8 +6,7 @@ use Illuminate\Validation\Rules\Password;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-new #[Title('Daftar')] class extends Component
-{
+new #[Title('Daftar')] class extends Component {
     public string $name = '';
 
     public string $email = '';
@@ -87,14 +86,9 @@ new #[Title('Daftar')] class extends Component
         <form wire:submit="register" class="space-y-5">
             <div>
                 <label for="name" class="mb-1.5 block text-sm font-medium text-slate-700">Nama Lengkap</label>
-                <input
-                    id="name"
-                    type="text"
-                    wire:model.live="name"
-                    autocomplete="name"
+                <input id="name" type="text" wire:model.live="name" autocomplete="name"
                     class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 @error('name') border-red-500 @enderror"
-                    placeholder="Nama lengkap"
-                >
+                    placeholder="Nama lengkap">
                 @error('name')
                     <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -102,14 +96,9 @@ new #[Title('Daftar')] class extends Component
 
             <div>
                 <label for="email" class="mb-1.5 block text-sm font-medium text-slate-700">Email</label>
-                <input
-                    id="email"
-                    type="email"
-                    wire:model.live="email"
-                    autocomplete="email"
+                <input id="email" type="email" wire:model.live="email" autocomplete="email"
                     class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 @error('email') border-red-500 @enderror"
-                    placeholder="nama@email.com"
-                >
+                    placeholder="nama@email.com">
                 @error('email')
                     <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -117,13 +106,9 @@ new #[Title('Daftar')] class extends Component
 
             <div>
                 <label for="nim_nip" class="mb-1.5 block text-sm font-medium text-slate-700">NIM / NIP</label>
-                <input
-                    id="nim_nip"
-                    type="text"
-                    wire:model.live="nim_nip"
+                <input id="nim_nip" type="text" wire:model.live="nim_nip"
                     class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 @error('nim_nip') border-red-500 @enderror"
-                    placeholder="Contoh: 1234567890"
-                >
+                    placeholder="Contoh: H1D024022">
                 @error('nim_nip')
                     <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
                 @enderror
@@ -131,39 +116,29 @@ new #[Title('Daftar')] class extends Component
 
             <div>
                 <label for="password" class="mb-1.5 block text-sm font-medium text-slate-700">Kata Sandi</label>
-                <input
-                    id="password"
-                    type="password"
-                    wire:model.live="password"
-                    autocomplete="new-password"
+                <input id="password" type="password" wire:model.live="password" autocomplete="new-password"
                     class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 @error('password') border-red-500 @enderror"
-                    placeholder="Minimal 8 karakter"
-                >
+                    placeholder="Minimal 8 karakter">
                 @error('password')
                     <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
 
             <div>
-                <label for="password_confirmation" class="mb-1.5 block text-sm font-medium text-slate-700">Konfirmasi Kata Sandi</label>
-                <input
-                    id="password_confirmation"
-                    type="password"
-                    wire:model.live="password_confirmation"
+                <label for="password_confirmation" class="mb-1.5 block text-sm font-medium text-slate-700">Konfirmasi
+                    Kata Sandi</label>
+                <input id="password_confirmation" type="password" wire:model.live="password_confirmation"
                     autocomplete="new-password"
                     class="w-full rounded-lg border border-slate-300 px-3 py-2.5 text-sm shadow-sm outline-none transition focus:border-teal-500 focus:ring-2 focus:ring-teal-500/20 @error('password_confirmation') border-red-500 @enderror"
-                    placeholder="Ulangi kata sandi"
-                >
+                    placeholder="Ulangi kata sandi">
                 @error('password_confirmation')
                     <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
                 @enderror
             </div>
 
-            <button
-                type="submit"
+            <button type="submit"
                 class="w-full rounded-lg bg-teal-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-teal-700 disabled:opacity-50"
-                wire:loading.attr="disabled"
-            >
+                wire:loading.attr="disabled">
                 <span wire:loading.remove wire:target="register">Daftar</span>
                 <span wire:loading wire:target="register">Memproses...</span>
             </button>

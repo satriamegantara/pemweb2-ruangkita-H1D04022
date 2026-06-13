@@ -265,6 +265,7 @@ new #[Title('Buat Reservasi')] class extends Component {
                 <livewire:components::slot-tersedia
                     :ruangan-id="$this->ruangan_id"
                     tanggal="{{ $this->tanggal }}"
+                    wire:key="slot-{{ $this->ruangan_id ?? 'none' }}-{{ $this->tanggal }}"
                 />
             </div>
         </section>
