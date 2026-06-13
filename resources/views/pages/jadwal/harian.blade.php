@@ -69,15 +69,21 @@ new #[Title('Jadwal Harian')] class extends Component {
                 'reservasi' => null,
             ];
 
-            // Cari reservasi yang overlap dengan slot ini
+            // Cari reservasi yang overlap dengan slot ini.
+            // Baik status 'menunggu' maupun 'disetujui' keduanya memblokir slot sebagai 'Tidak Tersedia'.
+            $prioritas = ['kosong' => 0, 'menunggu' => 1, 'disetujui' => 2];
             foreach ($reservasi as $r) {
                 if ($r->jam_mulai < $jamSelesai && $r->jam_selesai > $jamMulai) {
-                    // Prioritas: disetujui > menunggu
-                    if ($slot['status'] === 'kosong' || ($slot['status'] === 'menunggu' && $r->status === 'disetujui')) {
+                    if (($prioritas[$r->status] ?? 0) > ($prioritas[$slot['status']] ?? 0)) {
                         $slot['status'] = $r->status;
                         $slot['reservasi'] = $r;
                     }
                 }
+            }
+
+            // Map status ke label: 'menunggu' & 'disetujui' keduanya ditampilkan sbg 'Tidak Tersedia'
+            if (in_array($slot['status'], ['menunggu', 'disetujui'], true)) {
+                $slot['status'] = 'tidak_tersedia';
             }
 
             $slots[$h] = $slot;
@@ -95,7 +101,7 @@ new #[Title('Jadwal Harian')] class extends Component {
         $tidakTersedia = 0;
 
         foreach ($jadwal as $slot) {
-            $slot['status'] === 'kosong' ? $tersedia++ : $tidakTersedia++;
+            $slot['status'] === 'tidak_tersedia' ? $tidakTersedia++ : $tersedia++;
         }
 
         return [
@@ -211,7 +217,12 @@ new #[Title('Jadwal Harian')] class extends Component {
                                 @php
                                     $palette = match ($slot['status']) {
                                         'kosong' => ['bg' => 'bg-emerald-50', 'text' => 'text-emerald-700', 'border' => 'border-emerald-200', 'dot' => 'bg-emerald-500'],
-                                        default => ['bg' => 'bg-rose-50', 'text' => 'text-rose-700', 'border' => 'border-rose-200', 'dot' => 'bg-rose-500'],
+                                        'tidak_tersedia' => ['bg' => 'bg-rose-50', 'text' => 'text-rose-700', 'border' => 'border-rose-200', 'dot' => 'bg-rose-500'],
+                                        default => ['bg' => 'bg-emerald-50', 'text' => 'text-emerald-700', 'border' => 'border-emerald-200', 'dot' => 'bg-emerald-500'],
+                                    };
+                                    $label = match ($slot['status']) {
+                                        'tidak_tersedia' => 'Tidak Tersedia',
+                                        default => 'Tersedia',
                                     };
                                 @endphp
                                 <tr wire:key="slot-{{ $slot['jam_mulai'] }}" class="hover:bg-slate-50/50">
@@ -221,7 +232,7 @@ new #[Title('Jadwal Harian')] class extends Component {
                                     <td class="px-6 py-4">
                                         <span class="inline-flex items-center gap-2 rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize {{ $palette['bg'] }} {{ $palette['text'] }} {{ $palette['border'] }}">
                                             <span class="h-1.5 w-1.5 rounded-full {{ $palette['dot'] }}"></span>
-                                            {{ $slot['status'] === 'kosong' ? 'Tersedia' : 'Tidak Tersedia' }}
+                                            {{ $label }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-slate-700">

@@ -336,7 +336,7 @@ unset($__errorArgs, $__bag); ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendB
 $__split = function ($name, $params = []) {
     return [$name, $params];
 };
-[$__name, $__params] = $__split('slot-tersedia', ['ruangan-id' => $this->ruangan_id,'tanggal' => ''.e($this->tanggal).'']);
+[$__name, $__params] = $__split('components::slot-tersedia', ['ruangan-id' => $this->ruangan_id,'tanggal' => ''.e($this->tanggal).'']);
 
 $__keyOuter = $__key ?? null;
 

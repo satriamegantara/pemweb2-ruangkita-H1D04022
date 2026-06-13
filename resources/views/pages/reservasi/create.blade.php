@@ -262,7 +262,7 @@ new #[Title('Buat Reservasi')] class extends Component {
             </form>
 
             <div class="lg:col-span-1">
-                <livewire:slot-tersedia
+                <livewire:components::slot-tersedia
                     :ruangan-id="$this->ruangan_id"
                     tanggal="{{ $this->tanggal }}"
                 />

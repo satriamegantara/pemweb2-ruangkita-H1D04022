@@ -113,7 +113,12 @@ use Livewire\Component;
                                 <?php
                                     $palette = match ($slot['status']) {
                                         'kosong' => ['bg' => 'bg-emerald-50', 'text' => 'text-emerald-700', 'border' => 'border-emerald-200', 'dot' => 'bg-emerald-500'],
-                                        default => ['bg' => 'bg-rose-50', 'text' => 'text-rose-700', 'border' => 'border-rose-200', 'dot' => 'bg-rose-500'],
+                                        'tidak_tersedia' => ['bg' => 'bg-rose-50', 'text' => 'text-rose-700', 'border' => 'border-rose-200', 'dot' => 'bg-rose-500'],
+                                        default => ['bg' => 'bg-emerald-50', 'text' => 'text-emerald-700', 'border' => 'border-emerald-200', 'dot' => 'bg-emerald-500'],
+                                    };
+                                    $label = match ($slot['status']) {
+                                        'tidak_tersedia' => 'Tidak Tersedia',
+                                        default => 'Tersedia',
                                     };
                                 ?>
                                 <tr <?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::$currentLoop['key'] = 'slot-'.e($slot['jam_mulai']).''; ?>wire:key="slot-<?php echo e($slot['jam_mulai']); ?>" class="hover:bg-slate-50/50">
@@ -124,7 +129,7 @@ use Livewire\Component;
                                     <td class="px-6 py-4">
                                         <span class="inline-flex items-center gap-2 rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize <?php echo e($palette['bg']); ?> <?php echo e($palette['text']); ?> <?php echo e($palette['border']); ?>">
                                             <span class="h-1.5 w-1.5 rounded-full <?php echo e($palette['dot']); ?>"></span>
-                                            <?php echo e($slot['status'] === 'kosong' ? 'Tersedia' : 'Tidak Tersedia'); ?>
+                                            <?php echo e($label); ?>
 
                                         </span>
                                     </td>

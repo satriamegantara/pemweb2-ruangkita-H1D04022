@@ -30,6 +30,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::livewire('/dashboard', 'pages::admin.dashboard')->name('dashboard');
     Route::livewire('/ruangan', 'pages::admin.ruangan.index')->name('ruangan.index');
+    Route::livewire('/ruangan/tambah', 'pages::admin.ruangan.form')->name('ruangan.create');
+    Route::livewire('/ruangan/{id}/edit', 'pages::admin.ruangan.form')->name('ruangan.edit');
     Route::livewire('/pemohon', 'pages::admin.pemohon.index')->name('pemohon.index');
     Route::livewire('/persetujuan', 'pages::admin.persetujuan.index')->name('persetujuan.index');
 });
