@@ -39,6 +39,7 @@ class NoJadwalBentrok implements ValidationRule
         $bentrok = Reservasi::query()
             ->where('ruangan_id', $this->ruanganId)
             ->whereDate('tanggal', $tanggal)
+            ->whereIn('status', ['menunggu', 'disetujui'])
             ->when($this->ignoreId, fn($query) => $query->where('id', '!=', $this->ignoreId))
             ->where(function ($query) use ($jamMulai, $jamSelesai) {
                 $query->whereBetween('jam_mulai', [$jamMulai, $jamSelesai])

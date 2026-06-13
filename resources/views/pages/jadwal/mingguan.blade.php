@@ -89,7 +89,7 @@ new #[Title('Kalender Mingguan')] class extends Component {
 
         $query = Reservasi::query()
             ->with(['user', 'ruangan'])
-            ->whereIn('status', ['menunggu', 'disetujui', 'ditolak'])
+            ->whereIn('status', ['menunggu', 'disetujui'])
             ->where('tanggal', '>=', $start->toDateString())
             ->where('tanggal', '<', $end->toDateString())
             ->orderBy('jam_mulai');
