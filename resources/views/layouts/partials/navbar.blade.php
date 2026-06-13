@@ -12,10 +12,12 @@
                     <a href="{{ route('admin.ruangan.index') }}" class="transition hover:text-teal-700">Ruangan</a>
                     <a href="{{ route('admin.pemohon.index') }}" class="transition hover:text-teal-700">Pemohon</a>
                     <a href="{{ route('admin.persetujuan.index') }}" class="transition hover:text-teal-700">Persetujuan</a>
+                    <a href="{{ route('jadwal.mingguan') }}" class="transition hover:text-teal-700">Kalender</a>
                 @else
                     <a href="{{ route('dashboard') }}" class="transition hover:text-teal-700">Dashboard</a>
                     <a href="{{ route('reservasi.index') }}" class="transition hover:text-teal-700">Reservasi</a>
                     <a href="{{ route('jadwal.harian') }}" class="transition hover:text-teal-700">Jadwal</a>
+                    <a href="{{ route('jadwal.mingguan') }}" class="transition hover:text-teal-700">Kalender</a>
                 @endif
             </div>
 

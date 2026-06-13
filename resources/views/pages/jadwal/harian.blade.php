@@ -122,6 +122,10 @@ new #[Title('Jadwal Harian')] class extends Component {
                     class="inline-flex items-center text-sm font-medium text-teal-700 hover:text-teal-800">
                     &larr; Kembali ke Dashboard
                 </a>
+                <a href="{{ route('jadwal.mingguan') }}"
+                    class="inline-flex items-center text-sm font-medium text-teal-700 hover:text-teal-800">
+                    Lihat Kalender Mingguan &rarr;
+                </a>
             </div>
         </div>
 

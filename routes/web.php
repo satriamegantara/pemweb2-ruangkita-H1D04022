@@ -15,6 +15,7 @@ Route::middleware('auth')->group(function () {
     Route::livewire('/reservasi', 'pages::reservasi.index')->name('reservasi.index');
     Route::livewire('/reservasi/buat', 'pages::reservasi.create')->name('reservasi.create');
     Route::livewire('/jadwal', 'pages::jadwal.harian')->name('jadwal.harian');
+    Route::livewire('/jadwal/mingguan', 'pages::jadwal.mingguan')->name('jadwal.mingguan');
 
     Route::post('/logout', function () {
         Auth::logout();
