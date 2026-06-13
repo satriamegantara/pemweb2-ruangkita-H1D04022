@@ -21,17 +21,9 @@ new #[Title('Daftar Reservasi')] class extends Component {
 
     public ?int $cancelingId = null;
 
-    public array $orderedIds = [];
-
     public function mount(): void
     {
         $this->resetPage();
-        $this->orderedIds = $this->reservasiList->pluck('id')->toArray();
-    }
-
-    public function updatedOrderedIds($value): void
-    {
-        $this->orderedIds = $value;
     }
 
     public function updatedSearch(): void
@@ -101,17 +93,6 @@ new #[Title('Daftar Reservasi')] class extends Component {
     public function closeCancelConfirm(): void
     {
         $this->cancelingId = null;
-    }
-
-    public function updateOrder($orderedIds): void
-    {
-        $this->orderedIds = $orderedIds;
-        $this->dispatch(
-            'notify',
-            type: 'success',
-            title: 'Urutan diperbarui',
-            message: 'Urutan baris berhasil disimpan di sisi klien.',
-        );
     }
 
     #[Computed]
@@ -261,7 +242,7 @@ new #[Title('Daftar Reservasi')] class extends Component {
                             <th scope="col" class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-slate-600">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-200 bg-white" wire:sort="updateOrder">
+                    <tbody class="divide-y divide-slate-200 bg-white">
                         @forelse ($this->reservasiList as $reservasi)
                             @php
                                 $statusPalette = match ($reservasi->status) {
@@ -271,7 +252,7 @@ new #[Title('Daftar Reservasi')] class extends Component {
                                     default => ['bg' => 'bg-slate-50', 'text' => 'text-slate-700', 'border' => 'border-slate-200'],
                                 };
                             @endphp
-                            <tr wire:sort:item="{{ $reservasi->id }}" wire:key="reservasi-{{ $reservasi->id }}" class="hover:bg-slate-50/50 cursor-move">
+                            <tr wire:key="reservasi-{{ $reservasi->id }}" class="hover:bg-slate-50/50">
                                 <td class="px-6 py-4 text-sm font-medium text-slate-900">
                                     {{ $reservasi->ruangan->nama ?? '-' }}
                                 </td>

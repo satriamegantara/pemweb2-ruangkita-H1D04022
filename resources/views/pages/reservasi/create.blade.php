@@ -71,15 +71,6 @@ new #[Title('Buat Reservasi')] class extends Component {
                         $fail('Jam selesai harus berada dalam jam operasional ruangan.');
                     }
                 },
-                function ($attribute, $value, $fail) {
-                    if ($this->jam_selesai && $this->jam_mulai) {
-                        $mulai = Carbon::createFromFormat('H:i', $this->jam_mulai);
-                        $selesai = Carbon::createFromFormat('H:i', $value);
-                        if ($selesai->lessThanOrEqualTo($mulai)) {
-                            $fail('Jam selesai harus lebih besar dari jam mulai.');
-                        }
-                    }
-                },
                 new NoJadwalBentrok($this->ruangan_id, $this->tanggal, $this->jam_mulai, $this->jam_selesai),
             ],
             'keterangan' => ['nullable', 'string', 'max:1000'],
@@ -120,6 +111,12 @@ new #[Title('Buat Reservasi')] class extends Component {
 
         if ($jamSelesai->gt($jamTutup)) {
             $this->addError('jam_selesai', 'Jam selesai harus berada dalam jam operasional ruangan.');
+
+            return;
+        }
+
+        if ($jamSelesai->lessThanOrEqualTo($jamMulai)) {
+            $this->addError('jam_selesai', 'Jam selesai harus lebih besar dari jam mulai.');
 
             return;
         }
