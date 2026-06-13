@@ -12,10 +12,12 @@
                     <a href="<?php echo e(route('admin.ruangan.index')); ?>" class="transition hover:text-teal-700">Ruangan</a>
                     <a href="<?php echo e(route('admin.pemohon.index')); ?>" class="transition hover:text-teal-700">Pemohon</a>
                     <a href="<?php echo e(route('admin.persetujuan.index')); ?>" class="transition hover:text-teal-700">Persetujuan</a>
+                    <a href="<?php echo e(route('jadwal.mingguan')); ?>" class="transition hover:text-teal-700">Kalender</a>
                 <?php else: ?>
                     <a href="<?php echo e(route('dashboard')); ?>" class="transition hover:text-teal-700">Dashboard</a>
                     <a href="<?php echo e(route('reservasi.index')); ?>" class="transition hover:text-teal-700">Reservasi</a>
                     <a href="<?php echo e(route('jadwal.harian')); ?>" class="transition hover:text-teal-700">Jadwal</a>
+                    <a href="<?php echo e(route('jadwal.mingguan')); ?>" class="transition hover:text-teal-700">Kalender</a>
                 <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
             </div>
 
